@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import FullscreenButton from "./ExpandButton";
 import "./Map.css";
 
 function Map() {
   const [location, setLocation] = useState(null);
+  const mapRef = useRef();
 
   useEffect(() => {
     let storedLocation = JSON.parse(localStorage.getItem("location"));
@@ -26,12 +27,24 @@ function Map() {
     }
   }, []);
 
-  console.log(location);
+  useEffect(() => {
+    if (location) {
+      console.log(location);
+      setTimeout(() => {
+        console.log(mapRef.current);
+        mapRef.current.flyTo(location, 17, {
+          animate: true,
+          duration: 2,
+        });
+      }, 500);
+    }
+  }, [location]);
 
   return (
     <div id="map">
       {location && (
         <MapContainer
+          ref={mapRef}
           center={location}
           zoom={13}
           scrollWheelZoom={true}
