@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import FullscreenButton from "./ExpandButton";
+import "./Map.css";
 
 function Map() {
   const [location, setLocation] = useState(null);
@@ -24,6 +26,8 @@ function Map() {
     }
   }, []);
 
+  console.log(location);
+
   return (
     <div id="map">
       {location && (
@@ -34,6 +38,9 @@ function Map() {
           zoomSnap={0.5}
           zoomDelta={0.5}
         >
+          <div className="fullscreen-button">
+            <FullscreenButton />
+          </div>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
