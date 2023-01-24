@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
 import FullscreenButton from "./ExpandButton";
 import "./Map.css";
 
@@ -40,6 +40,8 @@ function Map() {
     }
   }, [location]);
 
+  const pos = [location, [42.645400393762976, 21.16019668336993]];
+
   return (
     <div id="map">
       {location && (
@@ -58,6 +60,7 @@ function Map() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <Polyline positions={pos} color="red" />
           <Marker position={location}></Marker>
         </MapContainer>
       )}
