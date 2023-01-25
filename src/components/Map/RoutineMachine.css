@@ -1,0 +1,22 @@
+.leaflet-routing-container {
+  width: 360px;
+  background-color: white;
+  padding: 10px 5px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  color: black;
+  height: 500px;
+  overflow-y: scroll;
+}
+
+.leaflet-routing-container tr {
+  cursor: pointer;
+}
+
+.leaflet-routing-container tr td:nth-child(2) {
+  width: 70%;
+}
+
+.leaflet-routing-container tr td:nth-child(3) {
+  float: right;
+}

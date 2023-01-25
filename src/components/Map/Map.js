@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import FullscreenButton from "./ExpandButton";
+import RoutineMachine from "./RoutineMachine";
 import "./Map.css";
 
 function Map() {
@@ -29,18 +30,14 @@ function Map() {
 
   useEffect(() => {
     if (location) {
-      console.log(location);
       setTimeout(() => {
-        console.log(mapRef.current);
-        mapRef.current.flyTo(location, 17, {
+        mapRef.current.flyTo(location, 15, {
           animate: true,
           duration: 2,
         });
       }, 500);
     }
   }, [location]);
-
-  const pos = [location, [42.645400393762976, 21.16019668336993]];
 
   return (
     <div id="map">
@@ -60,8 +57,7 @@ function Map() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Polyline positions={pos} color="red" />
-          <Marker position={location}></Marker>
+          <RoutineMachine />
         </MapContainer>
       )}
     </div>
