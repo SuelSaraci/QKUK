@@ -1,12 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import FullscreenButton from "../ExpandButton/ExpandButton";
-import RoutineMachine from "./RoutineMachine/RoutineMachine";
+import RoutineMachine from "../RoutineMachine/RoutineMachine";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Map.css";
 
 function Map() {
   const [location, setLocation] = useState(null);
   const mapRef = useRef();
+
+  useEffect(() => {
+    setTimeout(() => {
+      const routeTable = document.querySelector(".leaflet-routing-container");
+      routeTable.classList.add("hidden");
+    }, 0);
+  }, []);
 
   useEffect(() => {
     let storedLocation = JSON.parse(localStorage.getItem("location"));
@@ -37,7 +45,12 @@ function Map() {
         });
       }, 500);
     }
-  }, [location]);
+  }, []);
+
+  const handleTableShow = () => {
+    const routeTable = document.querySelector(".leaflet-routing-container");
+    routeTable.classList.toggle("hidden");
+  };
 
   return (
     <div id="map">
@@ -52,6 +65,13 @@ function Map() {
         >
           <div className="fullscreen-button">
             <FullscreenButton />
+          </div>
+          <div className="routing-button">
+            <button onClick={handleTableShow}>
+              <span>
+                <FontAwesomeIcon icon="fa-street-view" />
+              </span>
+            </button>
           </div>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

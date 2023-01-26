@@ -6,9 +6,10 @@ import {
   faExpand,
   faCompress,
   faMagnifyingGlass,
+  faStreetView,
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faExpand, faCompress, faMagnifyingGlass);
+library.add(faExpand, faCompress, faMagnifyingGlass, faStreetView);
 
 function App() {
   return (
