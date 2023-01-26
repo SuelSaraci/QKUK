@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import FullscreenButton from "./ExpandButton";
-import RoutineMachine from "./RoutineMachine";
+import FullscreenButton from "../ExpandButton/ExpandButton";
+import RoutineMachine from "./RoutineMachine/RoutineMachine";
 import "./Map.css";
 
 function Map() {

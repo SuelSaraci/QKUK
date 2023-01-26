@@ -2,9 +2,13 @@ import "./App.css";
 import Map from "./components/Map/Map";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faExpand, faCompress } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExpand,
+  faCompress,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 
-library.add(faExpand, faCompress);
+library.add(faExpand, faCompress, faMagnifyingGlass);
 
 function App() {
   return (
