@@ -58,3 +58,30 @@
   color: #494a48;
   width: 100%;
 }
+
+.location-button { 
+  position: absolute;
+  top: 128px;
+    left: 11px;
+  z-index: 999;
+  border: 2px solid #c5c7bf;
+}
+
+.location-button button {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  border: none;
+  background: white;
+}
+
+.location-button button span {
+  text-align: center;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #494a48;
+  width: 100%;
+}
