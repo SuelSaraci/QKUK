@@ -1,28 +1,76 @@
-version: '3.7'
-
-services:
-  postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  geoserver:
-    image: docker.osgeo.org/geoserver:2.21.1
-    environment:
-      JAVA_OPTS: -Duser.timezone=UTC
-    volumes:
-      - geoserver_data:/opt/geoserver_data
-    ports:
-      - "8080:8080"
+version: "3"
 
 volumes:
-  postgres_data:
-  geoserver_data:
+   db-backups:
+   geoserver_data:
+   geodb-data:
+
+services:
+   db:
+      image: kartoza/postgis:latest
+      volumes:
+         - geodb-data:/var/lib/postgresql
+      ports:
+         - "25434:5432"
+      environment:
+         - POSTGRES_DB=gis,gwc
+         - POSTGRES_USER=docker
+         - POSTGRES_PASS=docker
+         - ALLOW_IP_RANGE=0.0.0.0/0
+      restart: on-failure
+
+   geoserver:
+      image: kartoza/geoserver:latest
+      volumes:
+         - geoserver_data:/opt/geoserver/data_dir
+      ports:
+         - "8600:8080"
+      restart: on-failure
+      environment:
+         - POSTGRES_DB=gis,gwc
+         - POSTGRES_USER=docker
+         - POSTGRES_PASS=docker
+         - ALLOW_IP_RANGE=0.0.0.0/0
+      depends_on:
+         - db
+      healthcheck:
+         test: curl --fail -s http://localhost:8080/ || exit 1
+         interval: 1m30s
+         timeout: 10s
+         retries: 3
+
+   dbbackups:
+      image: kartoza/pg-backup:latest
+      volumes:
+         - db-backups:/backups
+      environment:
+         - DUMPPREFIX=PG_db
+         - POSTGRES_USER=docker
+         - POSTGRES_PASS=docker
+         - POSTGRES_PORT=5432
+         - POSTGRES_HOST=db
+         - POSTGRES_DBNAME=gis
+
+      restart: on-failure
+      depends_on:
+         - db 
+
+   db-admin:
+      # user: pgadmin4@pgadmin.org
+      # password: admin
+      build:
+         context: ./
+      ports:
+         - "5050:5050"
+      depends_on:
+         - db
+      healthcheck:
+         test: curl --fail -s http://localhost:5050/ || exit 1
+         interval: 1m30s
+         timeout: 10s
+         retries: 3
+      environment:
+         - MAIL_SERVER=db
+         - MAIL_PORT=5432
+         - MAIL_USERNAME=docker
+         - MAIL_PASSWORD=docker
