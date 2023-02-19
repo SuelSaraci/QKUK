@@ -4,7 +4,7 @@ import FullscreenButton from "../ExpandButton/ExpandButton";
 import RoutineMachine from "../RoutineMachine/RoutineMachine";
 import { EditControl } from "react-leaflet-draw";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "leaflet/dist/leaflet.css";
+
 import "leaflet-draw/dist/leaflet.draw.css";
 
 import "./Map.css";
@@ -82,17 +82,17 @@ function Map() {
             geom: geojson.geometry,
           }),
         })
-        .then((response) => {
-          console.log(response.status);
-          console.log(response.headers.get("content-type"));
-          return response.text();
-        })
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+          .then((response) => {
+            console.log(response.status);
+            console.log(response.headers.get("content-type"));
+            return response.text();
+          })
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
 
         setCoordinates(geojson);
       } else {

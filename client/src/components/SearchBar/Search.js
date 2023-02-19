@@ -1,32 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Search.css";
-
-const testData = [
-  { name: "John", age: 25 },
-  { name: "Jane", age: 32 },
-  { name: "Bob", age: 45 },
-  { name: "Sara", age: 18 },
-  { name: "John", age: 25 },
-  { name: "Jane", age: 32 },
-  { name: "Bob", age: 45 },
-  { name: "Sara", age: 18 },
-  { name: "John", age: 25 },
-  { name: "Jane", age: 32 },
-  { name: "Bob", age: 45 },
-  { name: "Sara", age: 18 },
-];
 
 const SearchInput = () => {
   const [searchValue, setSearchValue] = useState("");
   const [results, setResults] = useState([]);
+  const [allResults, setAllResults] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3300/clinics")
+      .then((response) => response.json())
+      .then((data) => {
+        setResults(data);
+        setAllResults(data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   const handleSearch = (e) => {
-    setSearchValue(e.target.value);
-    const filteredResults = testData.filter((data) =>
-      data.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    setResults(filteredResults);
+    const query = e.target.value;
+    setSearchValue(query);
+
+    if (query.length > 0) {
+      const filteredResults = allResults.filter((result) =>
+        result.name.toLowerCase().startsWith(query.toLowerCase())
+      );
+      setResults(filteredResults);
+    } else {
+      setResults(allResults);
+    }
   };
 
   return (
@@ -41,7 +43,7 @@ const SearchInput = () => {
         />
         <FontAwesomeIcon className="search-icon" icon="fa-search" />
       </div>
-      {searchValue.length > 0 ? (
+      {searchValue.length > 0 && (
         <div>
           {results.length > 0 ? (
             <div className="results-container">
@@ -56,7 +58,7 @@ const SearchInput = () => {
             <p className="no-results">No Results Found</p>
           )}
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
