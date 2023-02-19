@@ -12,7 +12,7 @@ import "./Map.css";
 function Map() {
   const [location, setLocation] = useState([42.711778, 20.823036]);
   const [routeTableHidden, setRouteTableHidden] = useState(false);
-  const [coordinates, setCoordinates] = useState([]);
+  const [coordinates, setCoordinates] = useState(null);
   const mapRef = useRef();
   const maxBounds = [
     [42.22, 20.27],
@@ -65,10 +65,44 @@ function Map() {
 
   const handleShapeDrawn = (e) => {
     const geojson = e.layer.toGeoJSON();
+    const featureType = geojson.geometry.type;
 
-    setCoordinates(geojson);
-    console.log("Coordinates:", coordinates);
+    if (featureType === "Point") {
+      const name = prompt("Enter name of the feature:");
+      if (name) {
+        geojson.properties = { name };
+
+        fetch("/clinics", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            geom: geojson.geometry,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        setCoordinates(geojson);
+      } else {
+        // User cancelled the prompt dialog
+        e.layer.remove();
+      }
+    } else {
+      setCoordinates(geojson);
+    }
   };
+
+  useEffect(() => {
+    console.log("Coordinates:", coordinates);
+  }, [coordinates]);
 
   return (
     <div id="map">
