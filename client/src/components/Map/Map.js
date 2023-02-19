@@ -72,7 +72,7 @@ function Map() {
       if (name) {
         geojson.properties = { name };
 
-        fetch("/clinics", {
+        fetch("http://localhost:3300/clinics", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -82,13 +82,17 @@ function Map() {
             geom: geojson.geometry,
           }),
         })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        .then((response) => {
+          console.log(response.status);
+          console.log(response.headers.get("content-type"));
+          return response.text();
+        })
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
         setCoordinates(geojson);
       } else {
