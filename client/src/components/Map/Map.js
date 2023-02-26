@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker } from "react-leaflet";
 import FullscreenButton from "../ExpandButton/ExpandButton";
 import RoutineMachine from "../RoutineMachine/RoutineMachine";
 import { EditControl } from "react-leaflet-draw";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import Sidebar from "../Sidebar/Sidebar";
 import "leaflet-draw/dist/leaflet.draw.css";
 
 import "./Map.css";
@@ -12,6 +12,7 @@ import "./Map.css";
 function Map() {
   const [location, setLocation] = useState([42.711778, 20.823036]);
   const [routeTableHidden, setRouteTableHidden] = useState(false);
+  const [markerPosition, setMarkerPosition] = useState(location);
   const [coordinates, setCoordinates] = useState(null);
   const mapRef = useRef();
   const maxBounds = [
@@ -22,7 +23,9 @@ function Map() {
   useEffect(() => {
     setTimeout(() => {
       const routeTable = document.querySelector(".leaflet-routing-container");
-      routeTable.classList.add("hidden");
+      if (routeTable) {
+        routeTable.classList.add("hidden");
+      }
     }, 0);
   }, []);
 
@@ -43,24 +46,15 @@ function Map() {
     }
   };
 
-  // useEffect(() => {
-  //   if (location) {
-  //     setTimeout(() => {
-  //       mapRef.current.flyTo(location, 13, {
-  //         animate: true,
-  //         duration: 2,
-  //       });
-  //     }, 500);
-  //   }
-  // }, [location]);
-
   const handleTableShow = () => {
     const routeTable = document.querySelector(".leaflet-routing-container");
     routeTable.classList.toggle("hidden");
   };
 
   const Route = useCallback(() => {
-    return <RoutineMachine userLocation={location} />;
+    return (
+      <RoutineMachine userLocation={location} userClinic={markerPosition} />
+    );
   }, [location]);
 
   const handleShapeDrawn = (e) => {
@@ -108,65 +102,79 @@ function Map() {
     console.log("Coordinates:", coordinates);
   }, [coordinates]);
 
+  function handleSearchResultClick(data) {
+    console.log(data.image_url);
+    setMarkerPosition(data.geom.coordinates.reverse());
+  }
+
+  useEffect(() => {
+    // Update the marker position when location changes
+    setMarkerPosition(markerPosition);
+  }, [location]);
+
   return (
-    <div id="map">
-      <MapContainer
-        ref={mapRef}
-        center={location}
-        zoom={9}
-        scrollWheelZoom={true}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
-        minZoom={9}
-        maxBounds={maxBounds}
-      >
-        <div className="fullscreen-button">
-          <FullscreenButton />
-        </div>
-        <div className="location-button">
-          <button onClick={getUserLocation}>
-            <span>
-              <FontAwesomeIcon icon="fa-location-dot" />
-            </span>
-          </button>
-        </div>
-        <div className="routing-button">
-          <button onClick={handleTableShow}>
-            <span>
-              <FontAwesomeIcon icon="fa-street-view" />
-            </span>
-          </button>
-        </div>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {routeTableHidden && <Route />}
-        <FeatureGroup>
-          <EditControl
-            position="bottomleft"
-            onCreated={handleShapeDrawn}
-            draw={{
-              marker: true,
-              circle: true,
-              circlemarker: true,
-              polyline: true,
-              rectangle: true,
-              polygon: {
-                allowIntersection: true,
-                drawError: {
-                  color: "#e1e100",
-                  message: "Ooops!",
-                },
-                shapeOptions: {
-                  color: "#97009c",
-                },
-              },
-            }}
+    <>
+      <Sidebar onSearchResultClick={handleSearchResultClick} />
+      <div id="map">
+        <MapContainer
+          ref={mapRef}
+          center={location}
+          zoom={9}
+          scrollWheelZoom={true}
+          zoomSnap={0.5}
+          zoomDelta={0.5}
+          minZoom={9}
+          maxBounds={maxBounds}
+        >
+          <div className="fullscreen-button">
+            <FullscreenButton />
+          </div>
+          <div className="location-button">
+            <button onClick={getUserLocation}>
+              <span>
+                <FontAwesomeIcon icon="fa-location-dot" />
+              </span>
+            </button>
+          </div>
+          <div className="routing-button">
+            <button onClick={handleTableShow}>
+              <span>
+                <FontAwesomeIcon icon="fa-street-view" />
+              </span>
+            </button>
+          </div>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-        </FeatureGroup>
-      </MapContainer>
-    </div>
+          <Marker position={markerPosition} />
+          {routeTableHidden && <Route />}
+          <FeatureGroup>
+            <EditControl
+              position="bottomleft"
+              onCreated={handleShapeDrawn}
+              draw={{
+                marker: true,
+                circle: true,
+                circlemarker: true,
+                polyline: true,
+                rectangle: true,
+                polygon: {
+                  allowIntersection: true,
+                  drawError: {
+                    color: "#e1e100",
+                    message: "Ooops!",
+                  },
+                  shapeOptions: {
+                    color: "#97009c",
+                  },
+                },
+              }}
+            />
+          </FeatureGroup>
+        </MapContainer>
+      </div>
+    </>
   );
 }
 

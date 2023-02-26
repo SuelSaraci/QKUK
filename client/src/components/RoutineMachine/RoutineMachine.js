@@ -3,16 +3,12 @@ import { createControlComponent } from "@react-leaflet/core";
 import "./RoutineMachine.css";
 import "leaflet-routing-machine";
 
-const createRoutineMachineLayer = ({ userLocation }) => {
+const createRoutineMachineLayer = ({ userLocation, userClinic }) => {
   const instance = L.Routing.control({
-    createMarker: function(i, wp) {
-      return L.marker(wp.latLng)
-          .bindPopup('I\'m waypoint ' + i);
-  },
-    waypoints: [ 
-      L.latLng(userLocation),
-      L.latLng(42.645400393762976, 21.16019668336993),
-    ],
+    createMarker: function (i, wp) {
+      return L.marker(wp.latLng).bindPopup("I'm waypoint " + i);
+    },
+    waypoints: [L.latLng(userLocation), L.latLng(userClinic)],
     lineOptions: {
       styles: [{ color: "#6FA1EC", weight: 4 }],
     },
