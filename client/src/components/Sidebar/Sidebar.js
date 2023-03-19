@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Logo from "../../images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Sidebar.css";
+import stomatology from '../../icons/stomatology.svg'
+
 
 function Sidebar({ onSearchResultClick }) {
   const [searchValue, setSearchValue] = useState("");
