@@ -12,8 +12,9 @@ import "./Map.css";
 function Map() {
   const [location, setLocation] = useState([42.711778, 20.823036]);
   const [routeTableHidden, setRouteTableHidden] = useState(false);
-  const [markerPosition, setMarkerPosition] = useState(location);
-  const [coordinates, setCoordinates] = useState(null);
+  const [markerPosition, setMarkerPosition] = useState();
+  const [popupClinicData, setPopupClinicData] = useState("");
+
   const mapRef = useRef();
   const maxBounds = [
     [42.22, 20.27],
@@ -53,9 +54,13 @@ function Map() {
 
   const Route = useCallback(() => {
     return (
-      <RoutineMachine userLocation={location} userClinic={markerPosition} />
+      <RoutineMachine
+        userLocation={location}
+        userClinic={markerPosition}
+        popupClinicData={popupClinicData}
+      />
     );
-  }, [location]);
+  }, [location, markerPosition, popupClinicData]);
 
   const handleShapeDrawn = (e) => {
     const geojson = e.layer.toGeoJSON();
@@ -75,36 +80,21 @@ function Map() {
             name,
             geom: geojson.geometry,
           }),
-        })
-          .then((response) => {
-            console.log(response.status);
-            console.log(response.headers.get("content-type"));
-            return response.text();
-          })
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-
-        setCoordinates(geojson);
+        }).then((response) => {
+          return response.text();
+        });
       } else {
         // User cancelled the prompt dialog
         e.layer.remove();
       }
-    } else {
-      setCoordinates(geojson);
     }
   };
 
-  useEffect(() => {
-    console.log("Coordinates:", coordinates);
-  }, [coordinates]);
-
   function handleSearchResultClick(data) {
-    console.log(data.image_url);
-    setMarkerPosition(data.geom.coordinates.reverse());
+    const newMarkerPosition = data.geom.coordinates.reverse();
+    setPopupClinicData(data);
+    setMarkerPosition(newMarkerPosition);
+    mapRef.current.setView(newMarkerPosition); // this line centers the map to the new marker position
   }
 
   useEffect(() => {
@@ -147,7 +137,9 @@ function Map() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={markerPosition} />
+          {!routeTableHidden
+            ? markerPosition && <Marker position={markerPosition} />
+            : null}
           {routeTableHidden && <Route />}
           <FeatureGroup>
             <EditControl

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import Logo from "../../images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Sidebar.css";
-import stomatology from '../../icons/stomatology.svg'
-
 
 function Sidebar({ onSearchResultClick }) {
   const [searchValue, setSearchValue] = useState("");
@@ -23,8 +21,6 @@ function Sidebar({ onSearchResultClick }) {
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchValue(query);
-
-    console.log(allResults);
 
     if (query.length > 0) {
       const filteredResults = allResults.filter((result) =>
@@ -72,11 +68,16 @@ function Sidebar({ onSearchResultClick }) {
                           key={index}
                           onClick={() => handleCardClick(result.name)}
                         >
-                          <p>Klinika: {result.name}</p>
-                          <img
-                            src={result.image_url}
-                            className="result-image"
-                            alt="clinic-image"
+                          <h4>Klinika: {result.name}</h4>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: result.image_url,
+                            }}
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              fill: "white",
+                            }}
                           />
                         </div>
                       ))}

@@ -29,3 +29,18 @@
 .show {
   display: block;
 }
+
+.custom-popup {
+  max-width: 1000px; /* adjust to your desired width */
+  text-align: center;
+}
+
+.custom-popup img {
+  max-width: 100%;
+  height: auto;
+}
+
+.custom-popup p {
+  margin: 0;
+  padding: 10px;
+}
