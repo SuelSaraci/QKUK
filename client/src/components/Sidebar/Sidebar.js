@@ -24,7 +24,7 @@ function Sidebar({ onSearchResultClick }) {
 
     if (query.length > 0) {
       const filteredResults = allResults.filter((result) =>
-        result.name.toLowerCase().startsWith(query.toLowerCase())
+        result.name.toLowerCase().includes(query.toLowerCase())
       );
       setResults(filteredResults);
     } else {
@@ -68,11 +68,10 @@ function Sidebar({ onSearchResultClick }) {
                           key={index}
                           onClick={() => handleCardClick(result.name)}
                         >
-                          <h4>Klinika: {result.name}</h4>
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: result.image_url,
-                            }}
+                          <h4>{result.name}</h4>
+                          <img
+                            src={result.image_url}
+                            alt={result.name}
                             style={{
                               width: "40px",
                               height: "40px",
